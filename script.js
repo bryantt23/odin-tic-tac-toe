@@ -40,13 +40,14 @@ function Gameboard() {
 
   // get 3 boxes in the same row
   function render() {
-    const div = document.createElement('div');
-    div.style.display = 'flex';
     for (let i = 0; i < 3; i++) {
-      div.appendChild(getBox());
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      for (let j = 0; j < 3; j++) {
+        div.appendChild(getBox());
+      }
+      gameBoardElement.appendChild(div);
     }
-
-    gameBoardElement.appendChild(div);
   }
 
   return {
