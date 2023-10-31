@@ -18,4 +18,46 @@ later - computer
     pick random spots
 
 */
-alert('hii');
+
+const gameBoardElement = document.querySelector('.game-board');
+const initialGame = [
+  ['X', '_', 'O'],
+  ['_', '_', 'X'],
+  ['_', '_', '_']
+];
+function Gameboard() {
+  function initialize() {
+    gameBoardElement.appendChild(box);
+  }
+
+  function getBox() {
+    const box = document.createElement('div');
+    box.style.height = '50px';
+    box.style.width = '50px';
+    box.style.border = '5px solid black';
+    return box;
+  }
+
+  // get 3 boxes in the same row
+  function render() {
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    for (let i = 0; i < 3; i++) {
+      div.appendChild(getBox());
+    }
+
+    gameBoardElement.appendChild(div);
+  }
+
+  return {
+    initialize,
+    render
+  };
+}
+
+const theGameboard = Gameboard();
+function initialize() {
+  theGameboard.render();
+}
+
+initialize();
