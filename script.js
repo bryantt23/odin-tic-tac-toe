@@ -58,7 +58,7 @@ function GameManager() {
 function Gameboard() {
   const gameBoardArray = [
     // ['X', ' ', 'O'],
-    // [' ', ' ', 'X'],
+    // [' ', 'X', 'O'],
     // [' ', ' ', ' ']
 
     [' ', ' ', ' '],
@@ -103,14 +103,103 @@ function Gameboard() {
 
     const playerMark = theGameManager.getCurrentPlayerMark();
     gameBoardArray[i][j] = playerMark;
-    element.textContent = playerMark;
     theGameManager.changePlayer();
+    console.log('isGameOver', isGameOver());
+
     render();
+  }
+
+  function isGameOver() {
+    console.log('diagonalWinner', diagonalWinner());
+    return horizontalWinner() || verticalWinner() || diagonalWinner();
+  }
+
+  function diagonalWinner() {
+    let ct = 0;
+    for (let i = 0; i < 3; i++) {
+      if (gameBoardArray[i][i] === 'X') {
+        ct++;
+      }
+      if (gameBoardArray[i][i] === 'O') {
+        ct--;
+      }
+    }
+
+    if (ct === 3) {
+      return 'X';
+    }
+    if (ct === -3) {
+      return 'O';
+    }
+
+    ct = 0;
+
+    for (let i = 2; i >= 0; i--) {
+      if (gameBoardArray[2 - i][i] === 'X') {
+        // Adjust the indices here
+        ct++;
+      }
+      if (gameBoardArray[2 - i][i] === 'O') {
+        // Adjust the indices here
+        ct--;
+      }
+    }
+    if (ct === 3) {
+      return 'X';
+    }
+    if (ct === -3) {
+      return 'O';
+    }
+
+    return null;
+  }
+
+  function verticalWinner() {
+    for (let j = 0; j < 3; j++) {
+      let ct = 0;
+      for (let i = 0; i < 3; i++) {
+        if (gameBoardArray[i][j] === 'X') {
+          ct++;
+        }
+        if (gameBoardArray[i][j] === 'O') {
+          ct--;
+        }
+      }
+      if (ct === 3) {
+        return 'X';
+      }
+      if (ct === -3) {
+        return 'O';
+      }
+    }
+    return null;
+  }
+
+  function horizontalWinner() {
+    for (let i = 0; i < 3; i++) {
+      let ct = 0;
+      for (let j = 0; j < 3; j++) {
+        if (gameBoardArray[i][j] === 'X') {
+          ct++;
+        }
+        if (gameBoardArray[i][j] === 'O') {
+          ct--;
+        }
+      }
+      if (ct === 3) {
+        return 'X';
+      }
+      if (ct === -3) {
+        return 'O';
+      }
+    }
+    return null;
   }
 
   return {
     initialize,
-    markPosition
+    markPosition,
+    isGameOver
   };
 }
 
