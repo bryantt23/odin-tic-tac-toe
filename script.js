@@ -22,23 +22,21 @@ later - computer
 const gameBoardElement = document.querySelector('.game-board');
 
 gameBoardElement.addEventListener('click', e => {
+  theGameboard.markPosition(
+    e.target.getAttribute('i'),
+    e.target.getAttribute('j'),
+    e
+  );
   console.log(e.target.textContent);
   console.log(e.target.getAttribute('i'));
   console.log(e.target.getAttribute('j'));
 });
-
-const gameBoardArray = [
-  ['X', ' ', 'O'],
-  [' ', ' ', 'X'],
-  [' ', ' ', ' ']
-];
 
 function GameManager() {
   // let xTurn = true,
   //   gameOver = false;
   // if (!gameOver) {
   // }
-  const theGameboard = Gameboard();
 
   function initialize() {
     theGameboard.initialize();
@@ -50,6 +48,12 @@ function GameManager() {
 }
 
 function Gameboard() {
+  const gameBoardArray = [
+    ['X', ' ', 'O'],
+    [' ', ' ', 'X'],
+    [' ', ' ', ' ']
+  ];
+
   function initialize() {
     render();
   }
@@ -68,6 +72,7 @@ function Gameboard() {
 
   // get 3 boxes in the same row
   function render() {
+    gameBoardElement.innerHTML = '';
     for (let i = 0; i < 3; i++) {
       const div = document.createElement('div');
       div.style.display = 'flex';
@@ -78,10 +83,23 @@ function Gameboard() {
     }
   }
 
+  function markPosition(i, j, element) {
+    if (gameBoardArray[i][j] !== ' ') {
+      console.log('already has mark');
+      return;
+    }
+
+    gameBoardArray[i][j] = 'hii';
+    element.textContent = 'hii';
+    render();
+  }
+
   return {
-    initialize
+    initialize,
+    markPosition
   };
 }
 
+const theGameboard = Gameboard(); //TODO make private
 const theGameManager = GameManager();
 theGameManager.initialize();
