@@ -20,23 +20,49 @@ later - computer
 */
 
 const gameBoardElement = document.querySelector('.game-board');
+
+gameBoardElement.addEventListener('click', e => {
+  console.log(e.target.textContent);
+  console.log(e.target.getAttribute('i'));
+  console.log(e.target.getAttribute('j'));
+});
+
 const gameBoardArray = [
   ['X', ' ', 'O'],
   [' ', ' ', 'X'],
   [' ', ' ', ' ']
 ];
-function Gameboard() {
+
+function GameManager() {
+  // let xTurn = true,
+  //   gameOver = false;
+  // if (!gameOver) {
+  // }
+  const theGameboard = Gameboard();
+
   function initialize() {
-    gameBoardElement.appendChild(box);
+    theGameboard.initialize();
   }
 
-  function getBox(text) {
+  return {
+    initialize
+  };
+}
+
+function Gameboard() {
+  function initialize() {
+    render();
+  }
+
+  function getBox(text, i, j) {
     const box = document.createElement('div');
     box.textContent = text;
     box.style.height = '50px';
     box.style.width = '50px';
     box.style.border = '5px solid black';
     box.className = 'box';
+    box.setAttribute('i', i);
+    box.setAttribute('j', j);
     return box;
   }
 
@@ -46,21 +72,16 @@ function Gameboard() {
       const div = document.createElement('div');
       div.style.display = 'flex';
       for (let j = 0; j < 3; j++) {
-        div.appendChild(getBox(gameBoardArray[i][j]));
+        div.appendChild(getBox(gameBoardArray[i][j], i, j));
       }
       gameBoardElement.appendChild(div);
     }
   }
 
   return {
-    initialize,
-    render
+    initialize
   };
 }
 
-const theGameboard = Gameboard();
-function initialize() {
-  theGameboard.render();
-}
-
-initialize();
+const theGameManager = GameManager();
+theGameManager.initialize();
