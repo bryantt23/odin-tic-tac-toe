@@ -20,21 +20,23 @@ later - computer
 */
 
 const gameBoardElement = document.querySelector('.game-board');
-const initialGame = [
-  ['X', '_', 'O'],
-  ['_', '_', 'X'],
-  ['_', '_', '_']
+const gameBoardArray = [
+  ['X', ' ', 'O'],
+  [' ', ' ', 'X'],
+  [' ', ' ', ' ']
 ];
 function Gameboard() {
   function initialize() {
     gameBoardElement.appendChild(box);
   }
 
-  function getBox() {
+  function getBox(text) {
     const box = document.createElement('div');
+    box.textContent = text;
     box.style.height = '50px';
     box.style.width = '50px';
     box.style.border = '5px solid black';
+    box.className = 'box';
     return box;
   }
 
@@ -44,7 +46,7 @@ function Gameboard() {
       const div = document.createElement('div');
       div.style.display = 'flex';
       for (let j = 0; j < 3; j++) {
-        div.appendChild(getBox());
+        div.appendChild(getBox(gameBoardArray[i][j]));
       }
       gameBoardElement.appendChild(div);
     }
