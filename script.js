@@ -21,36 +21,48 @@ later - computer
 
 const gameBoardElement = document.querySelector('.game-board');
 
-gameBoardElement.addEventListener('click', e => {
+gameBoardElement.addEventListener('click', element => {
   theGameboard.markPosition(
-    e.target.getAttribute('i'),
-    e.target.getAttribute('j'),
-    e
+    element.target.getAttribute('i'),
+    element.target.getAttribute('j'),
+    element
   );
-  console.log(e.target.textContent);
-  console.log(e.target.getAttribute('i'));
-  console.log(e.target.getAttribute('j'));
+  console.log(element.target.textContent);
+  console.log(element.target.getAttribute('i'));
+  console.log(element.target.getAttribute('j'));
 });
 
 function GameManager() {
-  // let xTurn = true,
-  //   gameOver = false;
+  let xTurn = true,
+    gameOver = false;
   // if (!gameOver) {
   // }
 
   function initialize() {
     theGameboard.initialize();
   }
+  function getCurrentPlayerMark() {
+    return xTurn ? 'X' : 'O';
+  }
+  function changePlayer() {
+    xTurn = !xTurn;
+  }
 
   return {
-    initialize
+    initialize,
+    getCurrentPlayerMark,
+    changePlayer
   };
 }
 
 function Gameboard() {
   const gameBoardArray = [
-    ['X', ' ', 'O'],
-    [' ', ' ', 'X'],
+    // ['X', ' ', 'O'],
+    // [' ', ' ', 'X'],
+    // [' ', ' ', ' ']
+
+    [' ', ' ', ' '],
+    [' ', ' ', ' '],
     [' ', ' ', ' ']
   ];
 
@@ -89,8 +101,10 @@ function Gameboard() {
       return;
     }
 
-    gameBoardArray[i][j] = 'hii';
-    element.textContent = 'hii';
+    const playerMark = theGameManager.getCurrentPlayerMark();
+    gameBoardArray[i][j] = playerMark;
+    element.textContent = playerMark;
+    theGameManager.changePlayer();
     render();
   }
 
