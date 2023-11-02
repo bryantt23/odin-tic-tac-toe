@@ -24,8 +24,7 @@ const gameBoardElement = document.querySelector('.game-board');
 gameBoardElement.addEventListener('click', element => {
   theGameboard.markPosition(
     element.target.getAttribute('i'),
-    element.target.getAttribute('j'),
-    element
+    element.target.getAttribute('j')
   );
   console.log(element.target.textContent);
   console.log(element.target.getAttribute('i'));
@@ -35,7 +34,8 @@ gameBoardElement.addEventListener('click', element => {
 function GameManager() {
   let xTurn = true,
     gameOver = false;
-  // if (!gameOver) {
+  // while (!gameOver) {
+
   // }
 
   function initialize() {
@@ -57,10 +57,9 @@ function GameManager() {
 
 function Gameboard() {
   const gameBoardArray = [
-    // ['X', ' ', 'O'],
-    // [' ', 'X', 'O'],
+    // ['X', 'X', 'O'],
+    // [' ', ' ', 'O'],
     // [' ', ' ', ' ']
-
     [' ', ' ', ' '],
     [' ', ' ', ' '],
     [' ', ' ', ' ']
@@ -95,7 +94,7 @@ function Gameboard() {
     }
   }
 
-  function markPosition(i, j, element) {
+  function markPosition(i, j) {
     if (gameBoardArray[i][j] !== ' ') {
       console.log('already has mark');
       return;
@@ -109,9 +108,25 @@ function Gameboard() {
     render();
   }
 
+  function isDraw() {
+    let markCount = 0;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (gameBoardArray[i][j] != ' ') {
+          markCount++;
+        }
+      }
+    }
+
+    return markCount === 9 ? 'draw' : 'not a draw';
+  }
+
   function isGameOver() {
     console.log('diagonalWinner', diagonalWinner());
-    return horizontalWinner() || verticalWinner() || diagonalWinner();
+
+    return (
+      horizontalWinner() || verticalWinner() || diagonalWinner() || isDraw()
+    );
   }
 
   function diagonalWinner() {
