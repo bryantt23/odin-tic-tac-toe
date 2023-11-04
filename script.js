@@ -19,6 +19,13 @@ later - computer
 
 */
 
+const gameStatuses = {
+  DRAW: 'Draw',
+  X_WINS: 'X Wins!',
+  O_WINS: 'O Wins!',
+  NOT_A_DRAW: 'Not a Draw'
+};
+
 const gameBoardElement = document.querySelector('.game-board');
 
 gameBoardElement.addEventListener('click', element => {
@@ -34,18 +41,23 @@ gameBoardElement.addEventListener('click', element => {
 function GameManager() {
   let xTurn = true,
     gameOver = false;
-  // while (!gameOver) {
-
-  // }
+  function checkGameStatus() {
+    gameOver = theGameboard.isGameOver();
+    if (gameOver !== gameStatuses.NOT_A_DRAW) {
+      alert(gameOver);
+    }
+  }
 
   function initialize() {
     theGameboard.initialize();
+    runGame();
   }
   function getCurrentPlayerMark() {
     return xTurn ? 'X' : 'O';
   }
   function changePlayer() {
     xTurn = !xTurn;
+    checkGameStatus();
   }
 
   return {
@@ -57,8 +69,8 @@ function GameManager() {
 
 function Gameboard() {
   const gameBoardArray = [
-    // ['X', 'X', 'O'],
-    // [' ', ' ', 'O'],
+    // ['X', 'X', ' '],
+    // [' ', 'O', 'O'],
     // [' ', ' ', ' ']
     [' ', ' ', ' '],
     [' ', ' ', ' '],
@@ -118,12 +130,10 @@ function Gameboard() {
       }
     }
 
-    return markCount === 9 ? 'draw' : 'not a draw';
+    return markCount === 9 ? gameStatuses.DRAW : gameStatuses.NOT_A_DRAW;
   }
 
   function isGameOver() {
-    console.log('diagonalWinner', diagonalWinner());
-
     return (
       horizontalWinner() || verticalWinner() || diagonalWinner() || isDraw()
     );
@@ -160,10 +170,10 @@ function Gameboard() {
       }
     }
     if (ct === 3) {
-      return 'X';
+      return gameStatuses.X_WINS;
     }
     if (ct === -3) {
-      return 'O';
+      return gameStatuses.O_WINS;
     }
 
     return null;
@@ -181,10 +191,10 @@ function Gameboard() {
         }
       }
       if (ct === 3) {
-        return 'X';
+        return gameStatuses.X_WINS;
       }
       if (ct === -3) {
-        return 'O';
+        return gameStatuses.O_WINS;
       }
     }
     return null;
@@ -202,10 +212,10 @@ function Gameboard() {
         }
       }
       if (ct === 3) {
-        return 'X';
+        return gameStatuses.X_WINS;
       }
       if (ct === -3) {
-        return 'O';
+        return gameStatuses.O_WINS;
       }
     }
     return null;
