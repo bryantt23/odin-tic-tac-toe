@@ -73,12 +73,12 @@ function GameManager() {
 
 function Gameboard() {
   const gameBoardArray = [
-    ['X', ' ', ' '],
-    [' ', 'O', 'O'],
-    [' ', ' ', 'X']
-    // [' ', ' ', ' '],
-    // [' ', ' ', ' '],
-    // [' ', ' ', ' ']
+    // ['X', ' ', ' '],
+    // [' ', 'O', 'O'],
+    // [' ', ' ', 'X']
+    [' ', ' ', ' '],
+    [' ', ' ', ' '],
+    [' ', ' ', ' ']
   ];
 
   function initialize() {
@@ -157,10 +157,10 @@ function Gameboard() {
     }
 
     if (ct === 3) {
-      return 'X';
+      return GAME_STATUSES.X_WINS;
     }
     if (ct === -3) {
-      return 'O';
+      return GAME_STATUSES.O_WINS;
     }
 
     ct = 0;
