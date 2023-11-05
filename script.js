@@ -9,10 +9,12 @@ const gameBoardElement = document.querySelector('.game-board');
 const gameInfo = document.querySelector('.game-info');
 
 gameBoardElement.addEventListener('click', element => {
-  theGameboard.markPosition(
-    element.target.getAttribute('i'),
-    element.target.getAttribute('j')
-  );
+  if (element.target.classList.contains('box')) {
+    theGameboard.markPosition(
+      element.target.getAttribute('i'),
+      element.target.getAttribute('j')
+    );
+  }
 });
 
 function GameManager() {
