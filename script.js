@@ -8,16 +8,7 @@ const GAME_STATUS = {
 const gameBoardElement = document.querySelector('.game-board');
 const gameInfo = document.querySelector('.game-info');
 
-gameBoardElement.addEventListener('click', element => {
-  if (element.target.classList.contains('box')) {
-    theGameboard.markPosition(
-      element.target.getAttribute('i'),
-      element.target.getAttribute('j')
-    );
-  }
-});
-
-function GameManager() {
+function GameManager(gameBoard) {
   let isXTurn = true,
     isGameOver = false;
 
@@ -33,7 +24,7 @@ function GameManager() {
   }
 
   function checkGameStatus() {
-    isGameOver = theGameboard.isGameOver();
+    isGameOver = gameBoard.isGameOver();
     let gameOverMessage;
     let playerX = document.querySelector('.playerX'),
       playerO = document.querySelector('.playerO');
@@ -59,7 +50,7 @@ function GameManager() {
   }
 
   function initialize() {
-    theGameboard.initialize();
+    gameBoard.initialize();
     isXTurn = true;
     isGameOver = false;
   }
@@ -241,5 +232,14 @@ function Gameboard() {
 }
 
 const theGameboard = Gameboard();
-const theGameManager = GameManager();
+const theGameManager = GameManager(theGameboard);
 theGameManager.initialize();
+
+gameBoardElement.addEventListener('click', element => {
+  if (element.target.classList.contains('box')) {
+    theGameboard.markPosition(
+      element.target.getAttribute('i'),
+      element.target.getAttribute('j')
+    );
+  }
+});
