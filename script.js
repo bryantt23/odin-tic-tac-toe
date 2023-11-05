@@ -27,6 +27,7 @@ const GAME_STATUSES = {
 };
 
 const gameBoardElement = document.querySelector('.game-board');
+const gameInfo = document.querySelector('.game-info');
 
 gameBoardElement.addEventListener('click', element => {
   theGameboard.markPosition(
@@ -40,36 +41,50 @@ gameBoardElement.addEventListener('click', element => {
 
 function GameManager() {
   let xTurn = true,
-    gameOver = false;
+    isGameOver = false;
+  function addRestartButton() {
+    const button = document.createElement('button');
+    button.textContent = 'Start a new game';
+    gameInfo.appendChild(button);
+    button.addEventListener('click', () => {
+      gameInfo.removeChild(button);
+      gameBoardElement.classList.remove('disabled');
+      initialize();
+    });
+  }
+
   function checkGameStatus() {
-    gameOver = theGameboard.isGameOver();
+    isGameOver = theGameboard.isGameOver();
     theGameboard.render();
-    let message;
+    let gameOverMessage;
     let playerX = document.querySelector('.playerX'),
       playerO = document.querySelector('.playerO');
-    switch (gameOver) {
+    switch (isGameOver) {
       case GAME_STATUSES.DRAW:
-        message = `${playerX.value} tied with ${playerO.value}`;
+        gameOverMessage = `${playerX.value} tied with ${playerO.value}`;
         break;
       case GAME_STATUSES.X_WINS:
-        message = `${playerX.value} defeated ${playerO.value}`;
+        gameOverMessage = `${playerX.value} defeated ${playerO.value}`;
         break;
       case GAME_STATUSES.O_WINS:
-        message = `${playerO.value} defeated ${playerX.value}`;
+        gameOverMessage = `${playerO.value} defeated ${playerX.value}`;
         break;
       default:
       // code block
     }
-    if (message) {
+    if (gameOverMessage) {
       const messageDiv = document.createElement('p');
-      messageDiv.textContent = message;
+      messageDiv.textContent = gameOverMessage;
       gameBoardElement.appendChild(messageDiv);
       gameBoardElement.classList.add('disabled');
+      addRestartButton();
     }
   }
 
   function initialize() {
     theGameboard.initialize();
+    xTurn = true;
+    isGameOver = false;
   }
   function getCurrentPlayerMark() {
     return xTurn ? 'X' : 'O';
@@ -86,17 +101,29 @@ function GameManager() {
   };
 }
 
+const emptyGameBoard = [
+  [' ', ' ', ' '],
+  [' ', ' ', ' '],
+  [' ', ' ', ' ']
+];
+const filledGameBoard = [
+  ['X', ' ', ' '],
+  ['O', ' ', 'O'],
+  ['X', ' ', ' ']
+];
 function Gameboard() {
-  const gameBoardArray = [
-    ['X', ' ', ' '],
-    [' ', 'O', 'O'],
-    [' ', ' ', 'X']
-    // [' ', ' ', ' '],
-    // [' ', ' ', ' '],
-    // [' ', ' ', ' ']
-  ];
+  // const gameBoardArray = [
+  // ['X', ' ', ' '],
+  // [' ', 'O', 'O'],
+  // ['X', ' ', ' ']
+  // [' ', ' ', ' '],
+  // [' ', ' ', ' '],
+  // [' ', ' ', ' ']
+  // ];
+  let gameBoardArray;
 
   function initialize() {
+    gameBoardArray = JSON.parse(JSON.stringify(emptyGameBoard));
     render();
   }
 
