@@ -44,15 +44,30 @@ function GameManager() {
   function checkGameStatus() {
     gameOver = theGameboard.isGameOver();
     theGameboard.render();
-    if (gameOver !== GAME_STATUSES.NOT_A_DRAW) {
+    let message;
+    let playerX = document.querySelector('.playerX'),
+      playerO = document.querySelector('.playerO');
+    switch (gameOver) {
+      case GAME_STATUSES.DRAW:
+        message = `${playerX.value} tied with ${playerO.value}`;
+        break;
+      case GAME_STATUSES.X_WINS:
+        message = `${playerX.value} defeated ${playerO.value}`;
+        break;
+      case GAME_STATUSES.O_WINS:
+        message = `${playerO.value} defeated ${playerX.value}`;
+        break;
+      default:
+      // code block
+    }
+    if (message) {
       const messageDiv = document.createElement('p');
-      messageDiv.textContent = gameOver;
+      messageDiv.textContent = message;
       gameBoardElement.appendChild(messageDiv);
       gameBoardElement.classList.add('disabled');
-      // debugger;
-      // alert(gameOver);
     }
   }
+
   function initialize() {
     theGameboard.initialize();
   }
@@ -73,12 +88,12 @@ function GameManager() {
 
 function Gameboard() {
   const gameBoardArray = [
-    // ['X', ' ', ' '],
-    // [' ', 'O', 'O'],
-    // [' ', ' ', 'X']
-    [' ', ' ', ' '],
-    [' ', ' ', ' '],
-    [' ', ' ', ' ']
+    ['X', ' ', ' '],
+    [' ', 'O', 'O'],
+    [' ', ' ', 'X']
+    // [' ', ' ', ' '],
+    // [' ', ' ', ' '],
+    // [' ', ' ', ' ']
   ];
 
   function initialize() {
