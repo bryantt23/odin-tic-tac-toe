@@ -49,14 +49,14 @@ function GameManager() {
         gameOverMessage = `${playerO.value} defeated ${playerX.value}`;
         break;
       default:
+        return;
     }
-    if (gameOverMessage) {
-      const messageDiv = document.createElement('p');
-      messageDiv.textContent = gameOverMessage;
-      gameBoardElement.appendChild(messageDiv);
-      gameBoardElement.classList.add('disabled');
-      addRestartButton();
-    }
+
+    const messageDiv = document.createElement('p');
+    messageDiv.textContent = gameOverMessage;
+    gameBoardElement.appendChild(messageDiv);
+    gameBoardElement.classList.add('disabled');
+    addRestartButton();
   }
 
   function initialize() {
