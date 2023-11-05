@@ -1,25 +1,4 @@
-/*
-game engine
-    player turn
-    while game not over
-    start over
-    winner/loser message
-
-player
-    name
-    symbol
-
-gameboard
-    array - 3 states empty, x, y
-    game over
-    render
-
-later - computer
-    pick random spots
-
-*/
-
-const GAME_STATUSES = {
+const GAME_STATUS = {
   DRAW: 'Draw',
   X_WINS: 'X Wins!',
   O_WINS: 'O Wins!',
@@ -34,14 +13,12 @@ gameBoardElement.addEventListener('click', element => {
     element.target.getAttribute('i'),
     element.target.getAttribute('j')
   );
-  console.log(element.target.textContent);
-  console.log(element.target.getAttribute('i'));
-  console.log(element.target.getAttribute('j'));
 });
 
 function GameManager() {
-  let xTurn = true,
+  let isXTurn = true,
     isGameOver = false;
+
   function addRestartButton() {
     const button = document.createElement('button');
     button.textContent = 'Start a new game';
@@ -60,17 +37,16 @@ function GameManager() {
     let playerX = document.querySelector('.playerX'),
       playerO = document.querySelector('.playerO');
     switch (isGameOver) {
-      case GAME_STATUSES.DRAW:
+      case GAME_STATUS.DRAW:
         gameOverMessage = `${playerX.value} tied with ${playerO.value}`;
         break;
-      case GAME_STATUSES.X_WINS:
+      case GAME_STATUS.X_WINS:
         gameOverMessage = `${playerX.value} defeated ${playerO.value}`;
         break;
-      case GAME_STATUSES.O_WINS:
+      case GAME_STATUS.O_WINS:
         gameOverMessage = `${playerO.value} defeated ${playerX.value}`;
         break;
       default:
-      // code block
     }
     if (gameOverMessage) {
       const messageDiv = document.createElement('p');
@@ -83,14 +59,14 @@ function GameManager() {
 
   function initialize() {
     theGameboard.initialize();
-    xTurn = true;
+    isXTurn = true;
     isGameOver = false;
   }
   function getCurrentPlayerMark() {
-    return xTurn ? 'X' : 'O';
+    return isXTurn ? 'X' : 'O';
   }
   function changePlayer() {
-    xTurn = !xTurn;
+    isXTurn = !isXTurn;
     checkGameStatus();
   }
 
@@ -111,15 +87,8 @@ const filledGameBoard = [
   ['O', ' ', 'O'],
   ['X', ' ', ' ']
 ];
+
 function Gameboard() {
-  // const gameBoardArray = [
-  // ['X', ' ', ' '],
-  // [' ', 'O', 'O'],
-  // ['X', ' ', ' ']
-  // [' ', ' ', ' '],
-  // [' ', ' ', ' '],
-  // [' ', ' ', ' ']
-  // ];
   let gameBoardArray;
 
   function initialize() {
@@ -154,21 +123,15 @@ function Gameboard() {
 
   function markPosition(i, j) {
     if (gameBoardArray[i][j] !== ' ') {
-      console.log('already has mark');
       return;
     }
 
     const playerMark = theGameManager.getCurrentPlayerMark();
     gameBoardArray[i][j] = playerMark;
     theGameManager.changePlayer();
-    console.log('isGameOver', isGameOver());
-    // debugger;
-    // if (isGameOver() === GAME_STATUSES.NOT_A_DRAW) {
-    //   render();
-    // }
   }
 
-  function isDraw() {
+  function gameIsADraw() {
     let markCount = 0;
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -178,12 +141,15 @@ function Gameboard() {
       }
     }
 
-    return markCount === 9 ? GAME_STATUSES.DRAW : GAME_STATUSES.NOT_A_DRAW;
+    return markCount === 9 ? GAME_STATUS.DRAW : GAME_STATUS.NOT_A_DRAW;
   }
 
   function isGameOver() {
     return (
-      horizontalWinner() || verticalWinner() || diagonalWinner() || isDraw()
+      horizontalWinner() ||
+      verticalWinner() ||
+      diagonalWinner() ||
+      gameIsADraw()
     );
   }
 
@@ -199,31 +165,27 @@ function Gameboard() {
     }
 
     if (ct === 3) {
-      return GAME_STATUSES.X_WINS;
+      return GAME_STATUS.X_WINS;
     }
     if (ct === -3) {
-      return GAME_STATUSES.O_WINS;
+      return GAME_STATUS.O_WINS;
     }
 
     ct = 0;
-
     for (let i = 2; i >= 0; i--) {
       if (gameBoardArray[2 - i][i] === 'X') {
-        // Adjust the indices here
         ct++;
       }
       if (gameBoardArray[2 - i][i] === 'O') {
-        // Adjust the indices here
         ct--;
       }
     }
     if (ct === 3) {
-      return GAME_STATUSES.X_WINS;
+      return GAME_STATUS.X_WINS;
     }
     if (ct === -3) {
-      return GAME_STATUSES.O_WINS;
+      return GAME_STATUS.O_WINS;
     }
-
     return null;
   }
 
@@ -239,10 +201,10 @@ function Gameboard() {
         }
       }
       if (ct === 3) {
-        return GAME_STATUSES.X_WINS;
+        return GAME_STATUS.X_WINS;
       }
       if (ct === -3) {
-        return GAME_STATUSES.O_WINS;
+        return GAME_STATUS.O_WINS;
       }
     }
     return null;
@@ -260,10 +222,10 @@ function Gameboard() {
         }
       }
       if (ct === 3) {
-        return GAME_STATUSES.X_WINS;
+        return GAME_STATUS.X_WINS;
       }
       if (ct === -3) {
-        return GAME_STATUSES.O_WINS;
+        return GAME_STATUS.O_WINS;
       }
     }
     return null;
@@ -277,6 +239,6 @@ function Gameboard() {
   };
 }
 
-const theGameboard = Gameboard(); //TODO make private
+const theGameboard = Gameboard();
 const theGameManager = GameManager();
 theGameManager.initialize();
