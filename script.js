@@ -34,7 +34,6 @@ function GameManager() {
 
   function checkGameStatus() {
     isGameOver = theGameboard.isGameOver();
-    theGameboard.render();
     let gameOverMessage;
     let playerX = document.querySelector('.playerX'),
       playerO = document.querySelector('.playerO');
@@ -130,6 +129,7 @@ function Gameboard() {
 
     const playerMark = theGameManager.getCurrentPlayerMark();
     gameBoardArray[i][j] = playerMark;
+    render();
     theGameManager.changePlayer();
   }
 
@@ -236,8 +236,7 @@ function Gameboard() {
   return {
     initialize,
     markPosition,
-    isGameOver,
-    render
+    isGameOver
   };
 }
 
