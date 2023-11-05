@@ -19,7 +19,7 @@ later - computer
 
 */
 
-const gameStatuses = {
+const GAME_STATUSES = {
   DRAW: 'Draw',
   X_WINS: 'X Wins!',
   O_WINS: 'O Wins!',
@@ -43,14 +43,18 @@ function GameManager() {
     gameOver = false;
   function checkGameStatus() {
     gameOver = theGameboard.isGameOver();
-    if (gameOver !== gameStatuses.NOT_A_DRAW) {
-      alert(gameOver);
+    theGameboard.render();
+    if (gameOver !== GAME_STATUSES.NOT_A_DRAW) {
+      const messageDiv = document.createElement('p');
+      messageDiv.textContent = gameOver;
+      gameBoardElement.appendChild(messageDiv);
+      gameBoardElement.classList.add('disabled');
+      // debugger;
+      // alert(gameOver);
     }
   }
-
   function initialize() {
     theGameboard.initialize();
-    runGame();
   }
   function getCurrentPlayerMark() {
     return xTurn ? 'X' : 'O';
@@ -69,12 +73,12 @@ function GameManager() {
 
 function Gameboard() {
   const gameBoardArray = [
-    // ['X', 'X', ' '],
-    // [' ', 'O', 'O'],
+    ['X', ' ', ' '],
+    [' ', 'O', 'O'],
+    [' ', ' ', 'X']
+    // [' ', ' ', ' '],
+    // [' ', ' ', ' '],
     // [' ', ' ', ' ']
-    [' ', ' ', ' '],
-    [' ', ' ', ' '],
-    [' ', ' ', ' ']
   ];
 
   function initialize() {
@@ -116,8 +120,10 @@ function Gameboard() {
     gameBoardArray[i][j] = playerMark;
     theGameManager.changePlayer();
     console.log('isGameOver', isGameOver());
-
-    render();
+    // debugger;
+    // if (isGameOver() === GAME_STATUSES.NOT_A_DRAW) {
+    //   render();
+    // }
   }
 
   function isDraw() {
@@ -130,7 +136,7 @@ function Gameboard() {
       }
     }
 
-    return markCount === 9 ? gameStatuses.DRAW : gameStatuses.NOT_A_DRAW;
+    return markCount === 9 ? GAME_STATUSES.DRAW : GAME_STATUSES.NOT_A_DRAW;
   }
 
   function isGameOver() {
@@ -170,10 +176,10 @@ function Gameboard() {
       }
     }
     if (ct === 3) {
-      return gameStatuses.X_WINS;
+      return GAME_STATUSES.X_WINS;
     }
     if (ct === -3) {
-      return gameStatuses.O_WINS;
+      return GAME_STATUSES.O_WINS;
     }
 
     return null;
@@ -191,10 +197,10 @@ function Gameboard() {
         }
       }
       if (ct === 3) {
-        return gameStatuses.X_WINS;
+        return GAME_STATUSES.X_WINS;
       }
       if (ct === -3) {
-        return gameStatuses.O_WINS;
+        return GAME_STATUSES.O_WINS;
       }
     }
     return null;
@@ -212,10 +218,10 @@ function Gameboard() {
         }
       }
       if (ct === 3) {
-        return gameStatuses.X_WINS;
+        return GAME_STATUSES.X_WINS;
       }
       if (ct === -3) {
-        return gameStatuses.O_WINS;
+        return GAME_STATUSES.O_WINS;
       }
     }
     return null;
@@ -224,7 +230,8 @@ function Gameboard() {
   return {
     initialize,
     markPosition,
-    isGameOver
+    isGameOver,
+    render
   };
 }
 

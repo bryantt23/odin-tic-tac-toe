@@ -5,9 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="./index.css" />
+    <style>
+      .disabled {
+        opacity: 0.8;
+        pointer-events: none;
+        background-color: #ccc;
+      }
+    </style>
   </head>
   <body>
     <div class="game-board"></div>
+    <p>Player 1 Name: <input type="text" class="player1" value="X-Man" /></p>
+    <p>Player 2 Name: <input type="text" class="player2" value="Othello" /></p>
     <script src="./script.js"></script>
   </body>
 </html>
