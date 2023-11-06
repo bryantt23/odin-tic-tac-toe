@@ -5,241 +5,160 @@ const GAME_STATUS = {
   NOT_A_DRAW: 'Not a Draw'
 };
 
-const gameBoardElement = document.querySelector('.game-board');
-const gameInfo = document.querySelector('.game-info');
-
-function GameManager(gameBoard) {
-  let isXTurn = true,
-    isGameOver = false;
-
-  function addRestartButton() {
-    const button = document.createElement('button');
-    button.textContent = 'Start a new game';
-    gameInfo.appendChild(button);
-    button.addEventListener('click', () => {
-      gameInfo.removeChild(button);
-      gameBoardElement.classList.remove('disabled');
-      initialize();
-    });
+class Gameboard {
+  initialize() {
+    this.gameBoardArray = [
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
+      [' ', ' ', ' ']
+    ];
+    this.render();
   }
 
-  function checkGameStatus() {
-    isGameOver = gameBoard.isGameOver();
-    let gameOverMessage;
-    let playerX = document.querySelector('.playerX'),
-      playerO = document.querySelector('.playerO');
-    switch (isGameOver) {
-      case GAME_STATUS.DRAW:
-        gameOverMessage = `${playerX.value} tied with ${playerO.value}`;
-        break;
-      case GAME_STATUS.X_WINS:
-        gameOverMessage = `${playerX.value} defeated ${playerO.value}`;
-        break;
-      case GAME_STATUS.O_WINS:
-        gameOverMessage = `${playerO.value} defeated ${playerX.value}`;
-        break;
-      default:
-        return;
-    }
-
-    const messageDiv = document.createElement('p');
-    messageDiv.textContent = gameOverMessage;
-    gameBoardElement.appendChild(messageDiv);
-    gameBoardElement.classList.add('disabled');
-    addRestartButton();
-  }
-
-  function initialize() {
-    gameBoard.initialize();
-    isXTurn = true;
-    isGameOver = false;
-  }
-  function getCurrentPlayerMark() {
-    return isXTurn ? 'X' : 'O';
-  }
-  function changePlayer() {
-    isXTurn = !isXTurn;
-    checkGameStatus();
-  }
-
-  return {
-    initialize,
-    getCurrentPlayerMark,
-    changePlayer
-  };
-}
-
-const emptyGameBoard = [
-  [' ', ' ', ' '],
-  [' ', ' ', ' '],
-  [' ', ' ', ' ']
-];
-const filledGameBoard = [
-  ['X', ' ', ' '],
-  ['O', ' ', 'O'],
-  ['X', ' ', ' ']
-];
-
-function Gameboard() {
-  let gameBoardArray;
-
-  function initialize() {
-    gameBoardArray = JSON.parse(JSON.stringify(emptyGameBoard));
-    render();
-  }
-
-  function getBox(text, i, j) {
+  getBox(text, i, j) {
     const box = document.createElement('div');
     box.textContent = text;
     box.style.height = '50px';
     box.style.width = '50px';
     box.style.border = '5px solid black';
     box.className = 'box';
-    box.setAttribute('i', i);
-    box.setAttribute('j', j);
+    box.dataset.i = i;
+    box.dataset.j = j;
     return box;
   }
 
-  // get 3 boxes in the same row
-  function render() {
+  render() {
+    const gameBoardElement = document.querySelector('.game-board');
     gameBoardElement.innerHTML = '';
     for (let i = 0; i < 3; i++) {
       const div = document.createElement('div');
       div.style.display = 'flex';
       for (let j = 0; j < 3; j++) {
-        div.appendChild(getBox(gameBoardArray[i][j], i, j));
+        div.appendChild(this.getBox(this.gameBoardArray[i][j], i, j));
       }
       gameBoardElement.appendChild(div);
     }
   }
 
-  function markPosition(i, j) {
-    if (gameBoardArray[i][j] !== ' ') {
-      return;
+  markPosition(i, j, currentPlayerMark) {
+    if (this.gameBoardArray[i][j] !== ' ') {
+      return false;
     }
-
-    const playerMark = theGameManager.getCurrentPlayerMark();
-    gameBoardArray[i][j] = playerMark;
-    render();
-    theGameManager.changePlayer();
+    this.gameBoardArray[i][j] = currentPlayerMark;
+    this.render();
+    return true;
   }
 
-  function gameIsADraw() {
-    let markCount = 0;
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        if (gameBoardArray[i][j] != ' ') {
-          markCount++;
-        }
-      }
-    }
-
-    return markCount === 9 ? GAME_STATUS.DRAW : GAME_STATUS.NOT_A_DRAW;
+  gameIsADraw() {
+    return this.gameBoardArray.flat().every(cell => cell !== ' ');
   }
 
-  function isGameOver() {
-    return (
-      horizontalWinner() ||
-      verticalWinner() ||
-      diagonalWinner() ||
-      gameIsADraw()
-    );
+  checkWinner(playerMark) {
+    // Check rows, columns and diagonals
+    const lines = [
+      ...this.gameBoardArray, // Rows
+      ...this.gameBoardArray[0].map((_, colIndex) =>
+        this.gameBoardArray.map(row => row[colIndex])
+      ), // Columns
+      [0, 1, 2].map(index => this.gameBoardArray[index][index]), // Main diagonal
+      [0, 1, 2].map(index => this.gameBoardArray[index][2 - index]) // Anti diagonal
+    ];
+
+    return lines.some(line => line.every(cell => cell === playerMark));
   }
 
-  function diagonalWinner() {
-    let ct = 0;
-    for (let i = 0; i < 3; i++) {
-      if (gameBoardArray[i][i] === 'X') {
-        ct++;
-      }
-      if (gameBoardArray[i][i] === 'O') {
-        ct--;
-      }
-    }
-
-    if (ct === 3) {
+  isGameOver() {
+    if (this.checkWinner('X')) {
       return GAME_STATUS.X_WINS;
     }
-    if (ct === -3) {
+    if (this.checkWinner('O')) {
       return GAME_STATUS.O_WINS;
     }
-
-    ct = 0;
-    for (let i = 2; i >= 0; i--) {
-      if (gameBoardArray[2 - i][i] === 'X') {
-        ct++;
-      }
-      if (gameBoardArray[2 - i][i] === 'O') {
-        ct--;
-      }
+    if (this.gameIsADraw()) {
+      return GAME_STATUS.DRAW;
     }
-    if (ct === 3) {
-      return GAME_STATUS.X_WINS;
-    }
-    if (ct === -3) {
-      return GAME_STATUS.O_WINS;
-    }
-    return null;
+    return GAME_STATUS.NOT_A_DRAW;
   }
-
-  function verticalWinner() {
-    for (let j = 0; j < 3; j++) {
-      let ct = 0;
-      for (let i = 0; i < 3; i++) {
-        if (gameBoardArray[i][j] === 'X') {
-          ct++;
-        }
-        if (gameBoardArray[i][j] === 'O') {
-          ct--;
-        }
-      }
-      if (ct === 3) {
-        return GAME_STATUS.X_WINS;
-      }
-      if (ct === -3) {
-        return GAME_STATUS.O_WINS;
-      }
-    }
-    return null;
-  }
-
-  function horizontalWinner() {
-    for (let i = 0; i < 3; i++) {
-      let ct = 0;
-      for (let j = 0; j < 3; j++) {
-        if (gameBoardArray[i][j] === 'X') {
-          ct++;
-        }
-        if (gameBoardArray[i][j] === 'O') {
-          ct--;
-        }
-      }
-      if (ct === 3) {
-        return GAME_STATUS.X_WINS;
-      }
-      if (ct === -3) {
-        return GAME_STATUS.O_WINS;
-      }
-    }
-    return null;
-  }
-
-  return {
-    initialize,
-    markPosition,
-    isGameOver
-  };
 }
 
-const theGameboard = Gameboard();
-const theGameManager = GameManager(theGameboard);
+class GameManager {
+  constructor(gameBoard) {
+    this.gameBoard = gameBoard;
+    this.isXTurn = true;
+    this.isGameOver = false;
+    this.gameInfo = document.querySelector('.game-info');
+    this.gameBoardElement = document.querySelector('.game-board');
+    this.playerX = document.querySelector('.playerX');
+    this.playerO = document.querySelector('.playerO');
+  }
+
+  addRestartButton() {
+    const button = document.createElement('button');
+    button.textContent = 'Start a new game';
+    this.gameInfo.appendChild(button);
+    button.addEventListener('click', () => {
+      this.gameInfo.removeChild(button);
+      this.gameBoardElement.classList.remove('disabled');
+      this.initialize();
+    });
+  }
+
+  checkGameStatus() {
+    const status = this.gameBoard.isGameOver();
+    if (status !== GAME_STATUS.NOT_A_DRAW) {
+      this.isGameOver = true;
+      let gameOverMessage;
+      switch (status) {
+        case GAME_STATUS.DRAW:
+          gameOverMessage = `${this.playerX.value} tied with ${this.playerO.value}`;
+          break;
+        case GAME_STATUS.X_WINS:
+          gameOverMessage = `${this.playerX.value} defeated ${this.playerO.value}`;
+          break;
+        case GAME_STATUS.O_WINS:
+          gameOverMessage = `${this.playerO.value} defeated ${this.playerX.value}`;
+          break;
+      }
+
+      const messageDiv = document.createElement('p');
+      messageDiv.textContent = gameOverMessage;
+      this.gameBoardElement.appendChild(messageDiv);
+      this.gameBoardElement.classList.add('disabled');
+      this.addRestartButton();
+    }
+  }
+
+  initialize() {
+    this.gameBoard.initialize();
+    this.isXTurn = true;
+    this.isGameOver = false;
+  }
+
+  getCurrentPlayerMark() {
+    return this.isXTurn ? 'X' : 'O';
+  }
+
+  changePlayer() {
+    if (!this.isGameOver) {
+      this.isXTurn = !this.isXTurn;
+      this.checkGameStatus();
+    }
+  }
+}
+
+// Initialization code
+const theGameboard = new Gameboard();
+const theGameManager = new GameManager(theGameboard);
 theGameManager.initialize();
 
-gameBoardElement.addEventListener('click', element => {
-  if (element.target.classList.contains('box')) {
-    theGameboard.markPosition(
-      element.target.getAttribute('i'),
-      element.target.getAttribute('j')
-    );
+document.querySelector('.game-board').addEventListener('click', event => {
+  if (event.target.classList.contains('box') && !theGameManager.isGameOver) {
+    const i = event.target.dataset.i;
+    const j = event.target.dataset.j;
+    if (
+      theGameboard.markPosition(i, j, theGameManager.getCurrentPlayerMark())
+    ) {
+      theGameManager.changePlayer();
+    }
   }
 });
